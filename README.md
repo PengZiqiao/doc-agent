@@ -15,7 +15,7 @@
 
 1. 克隆项目
 ```bash
-git clone <repository-url>
+git clone https://github.com/PengZiqiao/doc-agent.git
 cd doc_agent
 ```
 
@@ -101,7 +101,10 @@ doc_agent/
 ├── config.yaml           # 模型配置
 ├── system_prompt.yaml   # 系统提示词模板
 ├── requirements.txt      # Python 依赖
-├── .env                 # 环境变量
+├── README.md            # 项目文档
+├── .gitignore           # Git 忽略文件
+├── .env.example         # 环境变量示例
+├── .env                 # 环境变量（不提交到 Git）
 ├── files/               # 默认文件存储
 └── memories/            # 长期记忆存储
 ```

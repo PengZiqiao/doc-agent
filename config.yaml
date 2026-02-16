@@ -1,0 +1,11 @@
+siliconflow:
+  base_url: https://api.siliconflow.cn/v1
+  model: Qwen/Qwen2.5-7B-Instruct
+
+zhipu:
+  base_url: https://open.bigmodel.cn/api/paas/v4
+  model: glm-4.7-flash
+
+nvidia:
+  base_url: https://integrate.api.nvidia.com/v1
+  model: z-ai/glm4.7

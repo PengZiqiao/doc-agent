@@ -54,3 +54,15 @@ Thumbs.db
 
 files/
 memories/
+
+# Deep Agents UI
+ui/node_modules/
+ui/.next/
+ui/.yarn/
+ui/yarn-error.log
+
+# langgraph_api
+.langgraph_api/
+
+# self
+.gitignore

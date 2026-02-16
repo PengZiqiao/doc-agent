@@ -10,7 +10,6 @@ from langgraph.checkpoint.memory import MemorySaver
 
 load_dotenv()
 
-
 # 从config.yaml加载配置
 with open("config.yaml", 'r', encoding='utf-8') as f:
     config = yaml.safe_load(f)
@@ -33,7 +32,15 @@ llm = ChatOpenAI(
     temperature=0.7
 )
 
-system_prompt = load_prompt("system_prompt.yaml", encoding="utf-8").format()
+system_prompt_template = load_prompt("system_prompt.yaml", encoding="utf-8")
+
+tools_description = """
+- 规划任务：使用 write_todos 工具来规划和分解任务
+- 管理文件系统：使用 ls, read_file, write_file, edit_file 等工具管理文件
+- 委派子任务：委派复杂任务给专门的子智能体
+"""
+
+system_prompt = system_prompt_template.format(tools_description=tools_description)
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 files_dir = os.path.join(current_dir, "files")
@@ -51,24 +58,8 @@ agent = create_deep_agent(
     tools=[],
     system_prompt=system_prompt,
     model=llm,
-    backend=make_backend,
-    checkpointer=MemorySaver()
+    backend=make_backend
 )
 
-def main():
-    thread_id = str(uuid.uuid4())
-    config = {"configurable": {"thread_id": thread_id}}
-    
-    while True:
-        user_input = input("\n你: ")
-        
-        try:
-            result = agent.invoke({
-                "messages": [{"role": "user", "content": user_input}]
-            }, config=config)
-            print(f"\n助手: {result['messages'][-1].content}")
-        except Exception as e:
-            print(f"错误: {e}")
-
-if __name__ == "__main__":
-    main()
+# 导出agent供langgraph CLI使用
+__all__ = ["agent"]

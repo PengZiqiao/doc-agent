@@ -10,6 +10,7 @@
 - 任务规划：自动分解复杂任务
 - 子智能体：支持委派任务给专门的子智能体
 - LangSmith 监控：集成 LangSmith 进行性能监控和调试
+- Web UI：基于 Next.js 的现代化聊天界面
 
 ## 安装
 
@@ -19,9 +20,15 @@ git clone https://github.com/PengZiqiao/doc-agent.git
 cd doc_agent
 ```
 
-2. 安装依赖
+2. 安装 Python 依赖
 ```bash
 pip install -r requirements.txt
+```
+
+3. 安装 UI 依赖
+```bash
+cd ui
+npm install
 ```
 
 ## 配置
@@ -74,7 +81,47 @@ provider = "siliconflow"  # 可选: siliconflow | zhipu | nvidia
 
 ## 使用方法
 
-### 启动 Agent
+### 方式一：使用 Deep Agents UI（推荐）
+
+Deep Agents UI 是 LangChain 官方提供的现代化界面，支持实时聊天、工具可视化、时间旅行调试等高级功能。
+
+#### 启动服务
+
+```bash
+# 终端 1：启动 LangGraph 服务器
+langgraph dev
+
+# 终端 2：启动 Deep Agents UI（新终端）
+cd ui
+yarn dev
+```
+
+#### 访问 UI
+
+在浏览器中打开：http://localhost:3000
+
+#### 配置连接
+
+首次打开 UI 后，需要配置连接：
+
+1. 点击右上角的 "Settings" 按钮
+2. 输入以下信息：
+   - **Deployment URL**: `http://localhost:2024`
+   - **Assistant ID**: `agent`
+   - **LangSmith API Key**: （可选，如果需要使用 LangSmith 功能）
+
+3. 点击 "Save" 保存配置
+
+#### 功能特性
+
+- 实时聊天界面
+- 工具调用可视化
+- 时间旅行调试
+- 状态分叉
+- 文件系统访问
+- 子智能体委派
+
+### 方式二：命令行界面
 
 ```bash
 python agent.py
@@ -97,14 +144,31 @@ python agent.py
 
 ```
 doc_agent/
-├── agent.py              # 主程序
+├── agent.py              # 主程序（LangGraph agent）
 ├── config.yaml           # 模型配置
 ├── system_prompt.yaml   # 系统提示词模板
+├── langgraph.json        # LangGraph 配置文件
 ├── requirements.txt      # Python 依赖
 ├── README.md            # 项目文档
+├── start.sh             # 一键启动脚本
 ├── .gitignore           # Git 忽略文件
 ├── .env.example         # 环境变量示例
 ├── .env                 # 环境变量（不提交到 Git）
+├── ui/                  # Deep Agents UI
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── page.tsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── types/
+│   │   │   └── utils/
+│   │   ├── components/
+│   │   ├── lib/
+│   │   ├── providers/
+│   │   └── public/
+│   ├── package.json
+│   ├── next.config.ts
+│   └── ...
 ├── files/               # 默认文件存储
 └── memories/            # 长期记忆存储
 ```

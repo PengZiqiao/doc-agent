@@ -1,198 +1,105 @@
 # Doc Agent
 
-一个基于 LangChain DeepAgents 的智能文档助手，支持多种大语言模型提供商，具备长期记忆和文件管理功能。
+一个基于 LangGraph 和 Deep Agents 的智能文档助手，支持联网搜索、微信公众号管理和稿件审核等功能。
 
 ## 功能特性
 
-- 多模型支持：支持 SiliconFlow、智谱 GLM、NVIDIA 等多种模型提供商
-- 长期记忆：使用文件系统存储用户偏好和历史信息
-- 文件管理：内置文件系统工具，支持读写、编辑等操作
-- 任务规划：自动分解复杂任务
-- 子智能体：支持委派任务给专门的子智能体
-- LangSmith 监控：集成 LangSmith 进行性能监控和调试
-- Web UI：基于 Next.js 的现代化聊天界面
+- 🌐 **联网搜索** - 使用 Tavily 进行实时信息检索
+- 📝 **稿件审核** - 审核文章和文案的语言、内容和格式
+- 📱 **微信公众号** - 创建、发布、删除草稿和素材
+- 💾 **文件管理** - 在 files 目录下管理文档
+- 🧠 **长期记忆** - 在 memories 目录下存储用户偏好
 
-## 安装
+## 快速开始
 
-1. 克隆项目
-```bash
-git clone https://github.com/PengZiqiao/doc-agent.git
-cd doc_agent
-```
+### 1. 安装依赖
 
-2. 安装 Python 依赖
 ```bash
 pip install -r requirements.txt
 ```
 
-3. 安装 UI 依赖
-```bash
-cd ui
-npm install
-```
-
-## 配置
-
-### 1. 环境变量配置
+### 2. 配置环境变量
 
 复制 `.env` 文件并配置必要的 API keys：
 
-```bash
-cp .env.example .env
-```
-
-编辑 `.env` 文件：
-
 ```env
-# 选择使用的模型提供商 (siliconflow | zhipu | nvidia)
-PROVIDER=siliconflow
+# 模型配置
+ZHIPU_API_KEY=your-zhipu-api-key
 
-# API Keys
-SILICONFLOW_API_KEY=your_siliconflow_api_key
-ZHIPU_API_KEY=your_zhipu_api_key
-NVIDIA_API_KEY=your_nvidia_api_key
+# 搜索服务
+TAVILY_API_KEY=your-tavily-api-key
 
-# LangSmith 配置（可选）
+# 微信公众号（可选）
+WECHAT_APP_ID=your-wechat-app-id
+WECHAT_APP_SECRET=your-wechat-app-secret
+
+# LangChain 追踪（可选）
 LANGCHAIN_TRACING_V2=true
-LANGCHAIN_API_KEY=your_langsmith_api_key
+LANGCHAIN_API_KEY=your-langchain-api-key
 LANGCHAIN_PROJECT=doc-agent
 ```
 
-### 2. 模型配置
-
-在 `agent.py` 中选择使用的模型提供商：
-
-```python
-provider = "siliconflow"  # 可选: siliconflow | zhipu | nvidia
-```
-
-### 3. 系统提示词
-
-编辑 `system_prompt.yaml` 自定义系统提示词：
-
-```yaml
-你是一个有帮助的AI助手，可以回答各种问题。
-
-你可以使用内置的工具来帮助你完成任务，包括：
-- 规划任务
-- 管理文件系统
-- 委派子任务给专门的子智能体
-```
-
-## 使用方法
-
-### 方式一：使用 Deep Agents UI（推荐）
-
-Deep Agents UI 是 LangChain 官方提供的现代化界面，支持实时聊天、工具可视化、时间旅行调试等高级功能。
-
-#### 启动服务
+### 3. 一键启动所有服务
 
 ```bash
-# 终端 1：启动 LangGraph 服务器
-langgraph dev
-
-# 终端 2：启动 Deep Agents UI（新终端）
-cd ui
-yarn dev
+bash start_all.sh
 ```
 
-#### 访问 UI
+这将启动：
+- 微信公众号 MCP 服务器（端口 8000）
+- LangGraph 后端服务（端口 2024）
+- Deep Agents UI 前端（端口 3000）
 
-在浏览器中打开：http://localhost:3000
+### 4. 访问应用
 
-#### 配置连接
+- 前端界面：http://localhost:3000
+- 后端 API：http://localhost:2024
 
-首次打开 UI 后，需要配置连接：
-
-1. 点击右上角的 "Settings" 按钮
-2. 输入以下信息：
-   - **Deployment URL**: `http://localhost:2024`
-   - **Assistant ID**: `agent`
-   - **LangSmith API Key**: （可选，如果需要使用 LangSmith 功能）
-
-3. 点击 "Save" 保存配置
-
-#### 功能特性
-
-- 实时聊天界面
-- 工具调用可视化
-- 时间旅行调试
-- 状态分叉
-- 文件系统访问
-- 子智能体委派
-
-### 方式二：命令行界面
+### 5. 停止所有服务
 
 ```bash
-python agent.py
-```
-
-### 交互示例
-
-```
-你: 你好，我是张三
-助手: 你好张三！很高兴认识你。
-
-你: 我喜欢用 Python 编程
-助手: 好的，我已经记住了你喜欢用 Python 编程。
-
-你: 记住我的名字
-助手: 已将你的信息保存到长期记忆中。
+bash stop_all.sh
 ```
 
 ## 项目结构
 
 ```
 doc_agent/
-├── agent.py              # 主程序（LangGraph agent）
-├── config.yaml           # 模型配置
-├── system_prompt.yaml   # 系统提示词模板
-├── langgraph.json        # LangGraph 配置文件
-├── requirements.txt      # Python 依赖
-├── README.md            # 项目文档
-├── start.sh             # 一键启动脚本
-├── .gitignore           # Git 忽略文件
-├── .env.example         # 环境变量示例
-├── .env                 # 环境变量（不提交到 Git）
-├── ui/                  # Deep Agents UI
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── page.tsx
-│   │   │   ├── components/
-│   │   │   ├── hooks/
-│   │   │   ├── types/
-│   │   │   └── utils/
-│   │   ├── components/
-│   │   ├── lib/
-│   │   ├── providers/
-│   │   └── public/
-│   ├── package.json
-│   ├── next.config.ts
-│   └── ...
-├── files/               # 默认文件存储
-└── memories/            # 长期记忆存储
+├── agent.py              # 主程序，创建 deep agent
+├── model.py             # 模型配置
+├── tools.py             # 工具定义（搜索、MCP）
+├── config.yaml          # 模型配置文件
+├── system_prompt.yaml    # 系统提示词
+├── skills/              # 技能目录
+│   └── review-drafts/   # 稿件审核技能
+├── files/               # 文档存储目录
+├── memories/            # 记忆存储目录
+├── logs/                # 日志目录
+├── start_all.sh         # 一键启动脚本
+├── stop_all.sh          # 一键停止脚本
+└── deep-agents-ui/     # 前端项目
 ```
 
-## 支持的模型提供商
+## 查看日志
 
-| 提供商 | 模型 | 说明 |
-|--------|------|------|
-| SiliconFlow | Qwen/Qwen2.5-7B-Instruct | 通义千问 2.5 |
-| 智谱 GLM | glm-4-flash | 智谱 GLM-4 Flash |
-| NVIDIA | meta/llama-3.1-405b-instruct | Llama 3.1 |
+```bash
+# MCP 服务器日志
+tail -f logs/mcp.log
 
-## 技术栈
+# 后端服务日志
+tail -f logs/backend.log
 
-- LangChain - LLM 应用框架
-- DeepAgents - LangChain 智能体库
-- LangGraph - 工作流编排
-- PyYAML - YAML 配置解析
-- python-dotenv - 环境变量管理
+# 前端服务日志
+tail -f logs/frontend.log
+```
 
-## 许可证
+## 开发模式
 
-MIT License
+后端使用 LangGraph 开发模式运行，支持热重载。修改代码后无需重启，自动生效。
 
-## 贡献
+## 获取 API Keys
 
-欢迎提交 Issue 和 Pull Request！
+- **智谱 AI**：https://open.bigmodel.cn/
+- **Tavily 搜索**：https://tavily.com/（每月 1000 次免费搜索）
+- **微信公众号**：https://mp.weixin.qq.com/
+- **LangChain**：https://smith.langchain.com/
